@@ -1,0 +1,8 @@
+Code-Review+2: LF Jenkins CI <releng+lf-jobbuilder@linuxfoundation.org>
+Verified+1: LF Jenkins CI <releng+lf-jobbuilder@linuxfoundation.org>
+Code-Review+2: Aric Gardner <agardner@linuxfoundation.org>
+Submitted-by: Aric Gardner <agardner@linuxfoundation.org>
+Submitted-at: Sat, 07 Dec 2019 16:27:51 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/clamp/dashboard/+/99284
+Project: clamp/dashboard
+Branch: refs/heads/master
