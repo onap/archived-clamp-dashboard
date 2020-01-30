@@ -1,0 +1,18 @@
+---
+# Default Kibana configuration from kibana-docker.
+
+server.name: kibana
+server.host: "0"
+elasticsearch.hosts: http://elasticsearch:9200
+server.ssl.enabled: true
+server.ssl.key: /usr/share/kibana/config/keystore/org.onap.clamp.key.pem
+server.ssl.certificate: /usr/share/kibana/config/keystore/org.onap.clamp.crt.pem
+
+elasticsearch.ssl.verificationMode: none
+elasticsearch.username: kibanaserver
+elasticsearch.password: kibanaserver
+elasticsearch.requestHeadersWhitelist: ["securitytenant","Authorization"]
+
+opendistro_security.multitenancy.enabled: true
+opendistro_security.multitenancy.tenants.preferred: ["Private", "Global"]
+opendistro_security.readonly_mode.roles: ["kibana_read_only"]
