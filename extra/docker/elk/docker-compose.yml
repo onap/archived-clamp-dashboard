@@ -10,6 +10,8 @@ services:
       - ../../../src/main/docker/elasticsearch/config/clamp.pem:/usr/share/elasticsearch/config/kirk.pem
       - ../../../src/main/docker/elasticsearch/config/clamp-key.pem:/usr/share/elasticsearch/config/kirk-key.pem
       - ../../../src/main/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ../../../src/main/docker/elasticsearch/securityconfig/roles.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles.yml
+      - ../../../src/main/docker/elasticsearch/securityconfig/internal_users.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml
     ports:
       - 9200:9200
     networks:
@@ -29,6 +31,7 @@ services:
     volumes:
       - ../../../src/main/docker/logstash/pipeline:/usr/share/logstash/pipeline
       - ./logstash-input:/log-input
+      - ../../../src/main/docker/logstash/clamp-cert:/clamp-cert
     depends_on:
       - elasticsearch
     networks:

@@ -1,4 +1,3 @@
-<!--
 ### 
 # ============LICENSE_START======================================================= 
 # ONAP CLAMP 
@@ -19,8 +18,23 @@
 # limitations under the License. 
 # ============LICENSE_END============================================ 
 # =================================================================== 
-# 
+#
 ###
--->
 
 FROM amazon/opendistro-for-elasticsearch:1.3.0
+
+# Default clamp certificates for ES communication
+COPY config/ca-certs.pem /usr/share/elasticsearch/config/root-ca.pem
+COPY config/clamp.pem /usr/share/elasticsearch/config/esnode.pem
+COPY config/clamp-key.pem /usr/share/elasticsearch/config/esnode-key.pem
+COPY config/clamp.pem /usr/share/elasticsearch/config/kirk.pem
+COPY config/clamp-key.pem /usr/share/elasticsearch/config/kirk-key.pem
+
+# replace default elasticsearch.yml conf file
+COPY config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
+
+# replace default security roles and initial users
+COPY securityconfig/roles.yml /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles.yml
+COPY securityconfig/internal_users.yml /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml
+
+

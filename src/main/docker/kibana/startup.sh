@@ -23,7 +23,7 @@
 ###
 KIBANA_CONF_FILE="/usr/share/kibana/config/kibana.yml"
 SAVED_OBJECTS_ROOT="/saved-objects/"
-RESTORE_CMD="/usr/local/bin/restore.py -H http://127.0.0.1:5601/ -f"
+RESTORE_CMD="/usr/local/bin/restore.py -H https://127.0.0.1:5601/ -f"
 BACKUP_BIN="/usr/local/bin/backup.py"
 KIBANA_START_CMD="/usr/local/bin/kibana-docker"
 LOG_FILE="/tmp/load.kibana.log"
@@ -40,7 +40,7 @@ then
     echo "---- Waiting for elasticsearch to be up..."
     RES=-1
     PING_TIMEOUT=60
-    elastic_url=$(grep elasticsearch.url /usr/share/kibana/config/kibana.yml | cut -d\  -f2)
+    elastic_url=$(grep elasticsearch.host /usr/share/kibana/config/kibana.yml | cut -d\  -f2)
     while [ ! "$RES" -eq "0" ] && [ "$PING_TIMEOUT" -gt "0" ];
     do
         curl $elastic_url

@@ -28,7 +28,10 @@ LABEL Description="Logstash image with some plugins needed for the clamp dashboa
 # Default aaf certificates
 COPY certs /certs.d/
 
-# remove default pipeline first
+# Default clamp certificates for ES communication
+COPY clamp-cert /clamp-cert/
+
+# remove/replace default pipeline first
 COPY pipeline/logstash.conf /usr/share/logstash/pipeline/logstash.conf
 
 # add plugins needed by aggregation part of the pipeline
