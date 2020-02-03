@@ -43,7 +43,7 @@ then
     elastic_url=$(grep elasticsearch.host /usr/share/kibana/config/kibana.yml | cut -d\  -f2)
     while [ ! "$RES" -eq "0" ] && [ "$PING_TIMEOUT" -gt "0" ];
     do
-        curl $elastic_url
+        curl -k $elastic_url
         RES=$?
         sleep $WAIT_TIME
         let PING_TIMEOUT=$PING_TIMEOUT-$WAIT_TIME
