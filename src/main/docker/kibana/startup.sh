@@ -23,11 +23,12 @@
 ###
 KIBANA_CONF_FILE="/usr/share/kibana/config/kibana.yml"
 SAVED_OBJECTS_ROOT="/saved-objects/"
-RESTORE_CMD="/usr/local/bin/restore.py -H https://127.0.0.1:5601/ -f"
+RESTORE_CMD="/usr/local/bin/restore.py -H https://localhost:5601/ -f"
 BACKUP_BIN="/usr/local/bin/backup.py"
 KIBANA_START_CMD="/usr/local/bin/kibana-docker"
 LOG_FILE="/tmp/load.kibana.log"
-KIBANA_LOAD_CMD="/usr/local/bin/kibana-docker -H 127.0.0.1 -l $LOG_FILE"
+#KIBANA_LOAD_CMD="/usr/local/bin/kibana-docker -H 127.0.0.1 -l $LOG_FILE"
+KIBANA_LOAD_CMD="/usr/local/bin/kibana-docker -l $LOG_FILE"
 TIMEOUT=60
 WAIT_TIME=2
 LOADED_FLAG=$SAVED_OBJECTS_ROOT/.loaded
@@ -66,6 +67,18 @@ then
     tail -f $LOG_FILE &
     LOG_PID=$!
 
+    # Wait for kibana to be listening !!!
+    RES_KIBANA=$(curl -k --write-out %{http_code} --silent --output /dev/null https://localhost:5601)
+    echo "KIBANA Site status is now: $RES_KIBANA"
+    while [[ "$RES_KIBANA" -ne 302 ]] && [ "$TIMEOUT" -gt "0" ];
+    do
+      echo "KIBANA Site status is still: $RES_KIBANA"
+      sleep $WAIT_TIME
+      let LOG_TIMEOUT=$LOG_TIMEOUT-$WAIT_TIME
+      RES_KIBANA=$(curl -k --write-out %{http_code} --silent --output /dev/null https://localhost:5601)
+    done
+    echo "KIBANA Site status is good(http code 302): $RES_KIBANA"
+
     # Wait for kibana to be listening
     while [ -z "$(grep "Server running at" $LOG_FILE)" ] && [ "$TIMEOUT" -gt "0" ];
     do
@@ -73,7 +86,14 @@ then
         sleep $WAIT_TIME
         let TIMEOUT=$TIMEOUT-$WAIT_TIME
     done
-    sleep 1
+   
+    while [ -z "$(grep "http server running" $LOG_FILE)" ] && [ "$TIMEOUT" -gt "0" ];
+    do
+        echo "Waiting for kibana http server to start..."
+        sleep $WAIT_TIME
+        let TIMEOUT=$TIMEOUT-$WAIT_TIME
+    done   
+    sleep 4
 
     # restore files
     for saved_objects_path in $SAVED_OBJECTS_ROOT/*

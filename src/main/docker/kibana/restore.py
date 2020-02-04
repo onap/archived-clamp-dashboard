@@ -36,7 +36,8 @@ else:
 
 
 
-OBJECT_TYPES = ['index-pattern', 'config', 'search', 'visualization', 'dashboard']
+#OBJECT_TYPES = ['index-pattern', 'config', 'search', 'visualization', 'dashboard']
+OBJECT_TYPES = ['index-pattern', 'search', 'visualization', 'dashboard']
 
 def parse_args(args):
     """ Parse arguments given to this script"""
@@ -95,10 +96,10 @@ def main():
                 except KeyError:
                     logger.info("Could not find key %s in %s[%s]", key, obj_type, obj_id)
 
-            logger.info('Restoring %s id:%s (overwrite:%s)', obj_type, obj_id, args.force)
+            logger.info('Restoring %s id:%s (overwrite:%s on HOST:%s)', obj_type, obj_id, args.force, args.kibana_host.rstrip("/"))
             url = "%s/api/saved_objects/%s/%s" % (args.kibana_host.rstrip("/"), obj_type, obj_id)
             params = {'overwrite': True} if args.force else {}
-            post_object_req = requests.post(url, auth=('admin', 'admin'), verify=False,
+            post_object_req = requests.post(url, auth=('clampadmin', 'kibanaro'), verify=False,
                                             headers={'content-type': 'application/json',
                                                      'kbn-xsrf': 'True'},
                                             params=params,

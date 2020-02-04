@@ -68,7 +68,7 @@ def main():
 
     # get list of the set of objects we update
     url = "%s/api/saved_objects/_find" % (args.kibana_host.rstrip("/"),)
-    saved_objects_req = requests.get(url, auth=('admin', 'admin'), verify=False,
+    saved_objects_req = requests.get(url, auth=('clampadmin', 'kibanaro'), verify=False,
                                      params={'per_page': PER_PAGE,'type':['config','search','dashboard','visualization','index-pattern']})
 
     saved_objects = saved_objects_req.json()['saved_objects']

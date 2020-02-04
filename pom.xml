@@ -27,7 +27,7 @@
 	<groupId>org.onap.clamp</groupId>
 	<artifactId>clds</artifactId>
 	<version>4.2.0-SNAPSHOT</version>
-	<name>clamp</name>
+	<name>clamp-dashboard</name>
 
 
 	<parent>
