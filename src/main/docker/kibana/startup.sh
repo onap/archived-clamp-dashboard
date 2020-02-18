@@ -23,7 +23,7 @@
 ###
 KIBANA_CONF_FILE="/usr/share/kibana/config/kibana.yml"
 SAVED_OBJECTS_ROOT="/saved-objects/"
-RESTORE_CMD="/usr/local/bin/restore.py -H https://localhost:5601/ -f"
+RESTORE_CMD="/usr/local/bin/restore.py -H http://localhost:5601/ -f"
 BACKUP_BIN="/usr/local/bin/backup.py"
 KIBANA_START_CMD="/usr/local/bin/kibana-docker"
 LOG_FILE="/tmp/load.kibana.log"
@@ -36,12 +36,38 @@ LOADED_FLAG=$SAVED_OBJECTS_ROOT/.loaded
 if [ -f $LOADED_FLAG ];
 then
     echo "---- Kibana saved objects already restored. Remove $LOADED_FLAG if you want to restore them again."
-elif [ -n "$(ls -A ${SAVED_OBJECTS_PATH})" ];
+elif [ -n "$(ls -A ${SAVED_OBJECTS_ROOT}/*)" ];
 then
     echo "---- Waiting for elasticsearch to be up..."
     RES=-1
     PING_TIMEOUT=60
-    elastic_url=$(grep elasticsearch.host /usr/share/kibana/config/kibana.yml | cut -d\  -f2)
+    SSL_SERVER_ENABLED_orig=$(grep '^[[:blank:]]*[^[:blank:]#]' /usr/share/kibana/config/kibana.yml | grep server.ssl.enabled | cut -d\  -f2)
+    if [[ $SSL_SERVER_ENABLED_orig == \${* ]]
+    then
+     tmp2=${SSL_SERVER_ENABLED_orig#"\${"}
+     tmp2=${tmp2%"}"}
+     SSL_SERVER_ENABLED=${!tmp2}
+    else
+     SSL_SERVER_ENABLED=${SSL_SERVER_ENABLED_orig}
+    fi
+
+    if [ "$SSL_SERVER_ENABLED" = "true" ];
+    then
+       RESTORE_CMD="/usr/local/bin/restore.py -H https://localhost:5601/ -f"
+    fi
+   
+    elastic_url_orig=$(grep '^[[:blank:]]*[^[:blank:]#;]' /usr/share/kibana/config/kibana.yml | grep elasticsearch.hosts | cut -d\  -f2)
+#    tmp1 = ${elastic_url:0:2}
+#    if [ "tmp1" = "\${" ];
+    if [[ $elastic_url_orig == \${* ]]
+    then
+     tmp2=${elastic_url_orig#"\${"}
+     tmp2=${tmp2%"}"}
+     elastic_url=${!tmp2}
+    else
+     elastic_url=${elastic_url_orig}
+    fi
+   
     while [ ! "$RES" -eq "0" ] && [ "$PING_TIMEOUT" -gt "0" ];
     do
         curl -k $elastic_url
@@ -68,14 +94,24 @@ then
     LOG_PID=$!
 
     # Wait for kibana to be listening !!!
-    RES_KIBANA=$(curl -k --write-out %{http_code} --silent --output /dev/null https://localhost:5601)
+    if [ "$SSL_SERVER_ENABLED" = "true" ];
+    then
+       RES_KIBANA=$(curl -k --write-out %{http_code} --silent --output /dev/null https://localhost:5601)
+    else
+       RES_KIBANA=$(curl -k --write-out %{http_code} --silent --output /dev/null http://localhost:5601)
+    fi
     echo "KIBANA Site status is now: $RES_KIBANA"
     while [[ "$RES_KIBANA" -ne 302 ]] && [ "$TIMEOUT" -gt "0" ];
     do
       echo "KIBANA Site status is still: $RES_KIBANA"
       sleep $WAIT_TIME
       let LOG_TIMEOUT=$LOG_TIMEOUT-$WAIT_TIME
-      RES_KIBANA=$(curl -k --write-out %{http_code} --silent --output /dev/null https://localhost:5601)
+      if [ "$SSL_SERVER_ENABLED" = "true" ];
+      then
+          RES_KIBANA=$(curl -k --write-out %{http_code} --silent --output /dev/null https://localhost:5601)
+      else
+          RES_KIBANA=$(curl -k --write-out %{http_code} --silent --output /dev/null http://localhost:5601)
+      fi
     done
     echo "KIBANA Site status is good(http code 302): $RES_KIBANA"
 
@@ -117,7 +153,7 @@ then
     kill $LOG_PID
 else
     echo "---- No saved object found"
-    ls -A ${SAVED_OBJECTS_PATH}
+    ls -A ${SAVED_OBJECTS_ROOT}/*
 fi
 
 echo "---- Starting kibana"
