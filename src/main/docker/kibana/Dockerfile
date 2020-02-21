@@ -48,9 +48,11 @@ RUN yum install -y python-requests && yum clean all
 #         └── visualization-d837b120-c190-11e8-a550-27f2e3138fee.json
 
 RUN mkdir /saved-objects/ && chown kibana:kibana /saved-objects/
+RUN mkdir /usr/share/kibana/config/keystore/ && chown kibana:kibana /usr/share/kibana/config/keystore/
 
 USER kibana
 
+ADD conf/keystore /usr/share/kibana/config/keystore/
 ADD saved-objects /saved-objects
 ADD startup.sh /usr/local/bin/startup.sh
 ADD restore.py /usr/local/bin/restore.py
