@@ -37,4 +37,7 @@ COPY config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 COPY securityconfig/roles.yml /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles.yml
 COPY securityconfig/internal_users.yml /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml
 
+RUN chown elasticsearch:elasticsearch /usr/share/supervisor
 
+USER elasticsearch
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
