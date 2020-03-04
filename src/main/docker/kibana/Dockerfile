@@ -52,9 +52,9 @@ RUN mkdir /usr/share/kibana/config/keystore/ && chown kibana:kibana /usr/share/k
 
 USER kibana
 
-ADD conf/keystore /usr/share/kibana/config/keystore/
-ADD saved-objects /saved-objects
-ADD startup.sh /usr/local/bin/startup.sh
-ADD restore.py /usr/local/bin/restore.py
-ADD backup.py /usr/local/bin/backup.py
+COPY conf/keystore /usr/share/kibana/config/keystore/
+COPY saved-objects /saved-objects
+COPY startup.sh /usr/local/bin/startup.sh
+COPY restore.py /usr/local/bin/restore.py
+COPY backup.py /usr/local/bin/backup.py
 CMD /usr/local/bin/startup.sh
