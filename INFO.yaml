@@ -54,15 +54,10 @@ committers:
       company: 'ATT'
       id: 'xuegao'
       timezone: 'Europe/Brussels'
-    - name: 'Adam Krysiak'
-      email: 'adam.krysiak@nokia.com'
-      company: 'Nokia'
-      id: 'akrysiak'
-      timezone: 'Europe/Warsaw'
 tsc:
     # yamllint disable rule:line-length
     approval: 'Approved by Xinhui Li'
     changes:
-        - type: ''
-          name: ''
-          link: ''
+        - type: 'Removal'
+          name: 'Adam Krysiak'
+          link: 'https://lists.onap.org/g/ONAP-TSC/message/6306'
