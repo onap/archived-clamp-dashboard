@@ -20,7 +20,7 @@
 # ===================================================================
 #
 ###
-FROM  docker.elastic.co/logstash/logstash-oss:6.6.2
+FROM  docker.elastic.co/logstash/logstash-oss:7.9.0
 
 MAINTAINER "The Onap Team"
 LABEL Description="Logstash image with some plugins needed for the clamp dashboard"
