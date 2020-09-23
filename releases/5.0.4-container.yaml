@@ -1,0 +1,12 @@
+distribution_type: 'container'
+container_release_tag: '5.0.4'
+project: 'clamp-dashboard'
+log_dir: 'clamp-dashboard-maven-docker-stage-master/235/'
+ref: f89415422d621eb63248942a7204eab06e80342d
+containers:
+    - name: 'clamp-dashboard-elasticsearch'
+      version: '5.0-STAGING-20200923T174517Z'
+    - name: 'clamp-dashboard-logstash'
+      version: '5.0-STAGING-20200923T174517Z'
+    - name: 'clamp-dashboard-kibana'
+      version: '5.0-STAGING-20200923T174517Z'
